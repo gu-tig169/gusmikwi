@@ -1,14 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/secondscreen.dart';
-//import 'package:english_words/english_words.dart';
+import 'package:provider/provider.dart';
+import './model.dart';
+import 'SecondScreen.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  var state = MyState();
+
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => state,
+      child: MyApp(),
+    ),
+  );
+}
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: MainView(),
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.grey,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      home: MyHomePage(),
     );
   }
 }
@@ -16,66 +31,68 @@ class MyApp extends StatelessWidget {
 class MainView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'TIG169',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      home: MyHomePage(),
+    );
+  }
+}
+
+class MyHomePage extends StatelessWidget {
+  Widget build(BuildContext context) {
     return Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(height: 40),
-              _appBar(),
-              _checkboxRow('Dricka vatten'),
-              _checkboxRow('Äta mat'),
-              _checkboxRow('Yoga'),
-              _checkboxRow('Basket'),
-              _checkboxRow('Klättring'),
-            ],
-          ),
-        ),
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.all(18.0),
-          child: FloatingActionButton(
-            child: Icon(Icons.add),
-            backgroundColor: Colors.blueGrey,
-            //backgroundColor: Colors.blueGrey[400],
-            onPressed: () {
-              print("flytknapp funkar");
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => SecondScreen()));
-            },
-          ),
-        ));
-  }
-
-  Widget _appBar() {
-    return Container(
-        height: 53,
-        decoration: BoxDecoration(color: Colors.blue),
-        child: Center(
-          child: Text(
+      appBar: AppBar(
+          backgroundColor: Colors.grey,
+          title: Text(
             'TIG169 TODO',
-            style: TextStyle(color: Colors.white, fontSize: 24),
-          ),
-        ));
+          )),
+      body: Consumer<MyState>(
+        builder: (context, state, child) => TodoList(state.list),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () async {
+          var newCard = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => SecondScreen(TodoCard())));
+          //if (newCard != null) {
+          Provider.of<MyState>(context, listen: false).addCard(newCard);
+          //}
+        },
+      ),
+    );
+  }
+}
+
+class TodoList extends StatelessWidget {
+  final List<TodoCard> list;
+  TodoList(this.list);
+
+  Widget build(BuildContext context) {
+    return ListView(
+        children: list.map((card) => _todoItem(context, card)).toList());
   }
 
-  Widget _checkboxRow(String mm) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Checkbox(
-              value: false,
-              onChanged: (val) {},
-            ),
-            Text(
-              mm,
-              style: TextStyle(color: Colors.black, fontSize: 24),
-            ),
-            Icon(Icons.clear_outlined),
-          ],
-        ),
-      ],
+  Widget _todoItem(context, card) {
+    return ListTile(
+      leading: Container(
+        height: 30,
+        width: 30,
+        decoration: BoxDecoration(color: Colors.grey),
+      ),
+      title: Text(card.message),
+      trailing: IconButton(
+        icon: Icon(Icons.delete),
+        onPressed: () {
+          var state = Provider.of<MyState>(context);
+          state.removeCard(card);
+        },
+      ),
     );
   }
 }
