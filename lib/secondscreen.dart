@@ -1,31 +1,66 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/main.dart';
+import 'package:provider/provider.dart';
+import './model.dart';
 
-class SecondScreen extends StatelessWidget {
+class SecondScreen extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
+  State<StatefulWidget> createState() {
+    return SecondScreenViewState();
+  }
+}
+
+class SecondScreenViewState extends State<SecondScreen> {
+  String message;
+
+  final myController = TextEditingController();
+  @override
+  Widget build(
+    BuildContext context,
+  ) {
     return Scaffold(
-      appBar: AppBar(title: Text('TIG169 Todo')),
-      body: Center(
+      appBar: AppBar(
+          backgroundColor: Colors.grey,
+          title: Text('TIG169 TODO'),
+          actions: [
+            IconButton(
+              iconSize: 30.0,
+              icon: Icon(Icons.add),
+              onPressed: () {
+                Provider.of<MyState>(context, listen: false)
+                    .addCard(TodoCard(message: myController.text));
+                Navigator.pop(context);
+              },
+            )
+          ]),
+      body: Padding(
+        padding: const EdgeInsets.all(50.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Vad ska du göra?'),
-            TextField(),
-            _iconRow(),
+            _textField(myController),
           ],
         ),
       ),
     );
   }
+
+  Widget _textField(context) {
+    return Column(
+      children: [
+        TextField(
+          controller: myController,
+          decoration: InputDecoration(
+              hintText: 'Skriv något',
+              hintStyle: TextStyle(fontSize: 15.0, color: Colors.grey),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey, width: 5.0),
+              ),
+              labelText: 'Vad vill du göra?',
+              labelStyle: TextStyle(color: Colors.grey, fontSize: 25)),
+        ),
+      ],
+    );
+  }
 }
 
-Widget _iconRow() {
-  return Row(
-    children: [
-      Center(child: Icon(Icons.add_box_outlined)),
-      Text('Add'),
-    ],
-  );
-}
+//Widget _addButton() {
+//return IconButton(iconSize: 30.0, icon: Icon(Icons.add), onPressed: () {});}
