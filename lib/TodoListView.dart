@@ -36,10 +36,10 @@ class TodoListView extends StatelessWidget {
 
   List<TodoCard> _filterList(list, filterBy) {
     if (filterBy == 'All') return list;
-    if (filterBy == 'Undone') return list;
-    if (filterBy == 'Done') return list;
-
-    //return list.where((item) => item.color == Colors.all).toList();
+    if (filterBy == 'Undone')
+      return list.where((card) => card.isDone == false).toList();
+    if (filterBy == 'Done')
+      return list.where((card) => card.isDone == true).toList();
     return null;
   }
 }
@@ -62,8 +62,6 @@ class _TodoListState extends State<TodoList> {
               widget.list[index],
               context,
             ));
-
-    // children: list.map((card) => _todoItem(context, card)).toList());
   }
 
   Widget _todoItem(TodoCard card, context) {
@@ -77,7 +75,7 @@ class _TodoListState extends State<TodoList> {
           }),
       title: Text(card.message),
       trailing: IconButton(
-        icon: Icon(Icons.delete),
+        icon: Icon(Icons.clear),
         onPressed: () {
           var state = Provider.of<MyState>(context, listen: false);
           state.removeCard(card);

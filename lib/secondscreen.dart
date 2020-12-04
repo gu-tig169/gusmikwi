@@ -19,24 +19,15 @@ class SecondScreenViewState extends State<SecondScreen> {
   ) {
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: Colors.grey,
-          title: Text('TIG169 TODO'),
-          actions: [
-            IconButton(
-              iconSize: 30.0,
-              icon: Icon(Icons.add),
-              onPressed: () {
-                Provider.of<MyState>(context, listen: false)
-                    .addCard(TodoCard(message: myController.text));
-                Navigator.pop(context);
-              },
-            )
-          ]),
+        backgroundColor: Colors.grey,
+        title: Text('TIG169 TODO'),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(50.0),
         child: Column(
           children: [
             _textField(myController),
+            _addButton(myController, context),
           ],
         ),
       ),
@@ -49,18 +40,26 @@ class SecondScreenViewState extends State<SecondScreen> {
         TextField(
           controller: myController,
           decoration: InputDecoration(
-              hintText: 'Skriv något',
+              hintText: 'Write something',
               hintStyle: TextStyle(fontSize: 15.0, color: Colors.grey),
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.grey, width: 5.0),
               ),
-              labelText: 'Vad vill du göra?',
+              labelText: 'What do you want to do?',
               labelStyle: TextStyle(color: Colors.grey, fontSize: 25)),
         ),
       ],
     );
   }
-}
 
-//Widget _addButton() {
-//return IconButton(iconSize: 30.0, icon: Icon(Icons.add), onPressed: () {});}
+  Widget _addButton(myController, context) {
+    return IconButton(
+        iconSize: 30.0,
+        icon: Icon(Icons.add),
+        onPressed: () {
+          Provider.of<MyState>(context, listen: false)
+              .addCard(TodoCard(message: myController.text));
+          Navigator.pop(context);
+        });
+  }
+}
