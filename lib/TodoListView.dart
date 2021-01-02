@@ -69,9 +69,8 @@ class _TodoListState extends State<TodoList> {
       leading: Checkbox(
           value: card.isDone,
           onChanged: (bool value) {
-            setState(() {
-              card.isDone = value;
-            });
+             var state = Provider.of<MyState>(context, listen: false);
+            state.setCheckbox(card, value);
           }),
       title: Text(card.message),
       trailing: IconButton(
